@@ -83,28 +83,27 @@
             margin: 0 10px;
         }
     </style>
-   <script>
-    const esp32Ip = 'https://192.168.137.51/'; // Cambia 'tu_direccion_ip' por la dirección IP de tu placa ESP32
+    <script>
+        const esp32Ip = 'https://192.168.137.51'; // Dirección IP de tu dispositivo ESP32
 
-    function toggleFoco(roomNumber) {
-        let statusElement = document.getElementById('status' + roomNumber);
-        let action = statusElement.textContent === 'Encendido' ? 'off' : 'on';
-        fetch(`${esp32Ip}/${action}`, { mode: 'cors' })
-            .then(response => response.text())
-            .then(data => {
-                console.log(data);
-                if (action === 'on') {
-                    statusElement.textContent = 'Encendido';
-                    alert('LED Encendido en Habitación ' + roomNumber);
-                } else {
-                    statusElement.textContent = 'Apagado';
-                    alert('LED Apagado en Habitación ' + roomNumber);
-                }
-            })
-            .catch(error => console.error('Error:', error));
-    }
-</script>
-
+        function toggleFoco(roomNumber) {
+            let statusElement = document.getElementById('status' + roomNumber);
+            let action = statusElement.textContent === 'Encendido' ? 'off' : 'on';
+            fetch(`${esp32Ip}/${action}`, { mode: 'cors' })
+                .then(response => response.text())
+                .then(data => {
+                    console.log(data);
+                    if (action === 'on') {
+                        statusElement.textContent = 'Encendido';
+                        alert('LED Encendido en Habitación ' + roomNumber);
+                    } else {
+                        statusElement.textContent = 'Apagado';
+                        alert('LED Apagado en Habitación ' + roomNumber);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    </script>
 </head>
 <body>
     <div class="header">
