@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Salón inteligente</title>
-    <link rel="icon" href="ejempComp.jpg" type="image/jpeg">
-    <link rel="icon" href="itsm.ico" type="image/x-icon">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> <!-- Agrega Font Awesome -->
-    <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script> <!-- Agrega A-Frame -->
+    <title>Salón Inteligente</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -41,7 +39,7 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             max-width: 300px;
-            width: calc(50% - 40px); /* Ajuste para mostrar dos cuartos por fila */
+            width: calc(50% - 40px);
             box-sizing: border-box;
         }
         .room h2 {
@@ -58,6 +56,11 @@
         }
         .room button:hover {
             background-color: #454ba0;
+        }
+        .status {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
         }
         #canvas-container {
             width: 100%;
@@ -84,69 +87,66 @@
         }
     </style>
     <script>
-        const esp32Ip = 'https://3639-201-113-21-87.ngrok-free.app'; // Dirección URL proporcionada por ngrok
-
-        function toggleFoco(roomNumber) {
-            let statusElement = document.getElementById('status' + roomNumber);
-            let action = statusElement.textContent === 'Encendido' ? 'off' : 'on';
-            fetch(`${esp32Ip}/${action}`, { mode: 'cors' })
+        function toggleDevices(action) {
+            fetch('http://192.168.137.4/toggle?action=' + action)
                 .then(response => response.text())
                 .then(data => {
                     console.log(data);
-                    if (action === 'on') {
-                        statusElement.textContent = 'Encendido';
-                        alert('LED Encendido en Habitación ' + roomNumber);
-                    } else {
-                        statusElement.textContent = 'Apagado';
-                        alert('LED Apagado en Habitación ' + roomNumber);
-                    }
+                    updateStatus(data);
                 })
                 .catch(error => console.error('Error:', error));
         }
+
+        function updateStatus(status) {
+            const statusElement = document.getElementById('status');
+            if (statusElement) {
+                statusElement.textContent = 'Estado: ' + status;
+            }
+        }
+
+        function getStatus() {
+            fetch('http://192.168.137.4/status')
+                .then(response => response.text())
+                .then(data => {
+                    console.log(data);
+                    updateStatus(data);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        window.onload = getStatus;
     </script>
 </head>
 <body>
-    <div class="header">
-        <h1>Salón inteligente del ITSM</h1>
+
+<div class="header">
+    <h1>Salón Inteligente del ITSM</h1>
+</div>
+
+<div class="container">
+    <div class="room">
+        <h2>Control de Dispositivos</h2>
+        <button onclick="toggleDevices('on')">Encender</button>
+        <button onclick="toggleDevices('off')">Apagar</button>
+        <div id="status" class="status">Estado: Desconocido</div>
     </div>
-    <div class="container">
-        <!-- Habitaciones -->
-        <div class="room" id="room1">
-            <h2>Habitación 1</h2>
-            <p>Estado del foco: <span id="status1">Desconocido</span></p>
-            <button onclick="toggleFoco(1)">Cambiar Estado</button>
-        </div>
-        <div class="room" id="room2">
-            <h2>Habitación 2</h2>
-            <p>Estado del foco: <span id="status2">Desconocido</span></p>
-            <button onclick="toggleFoco(2)">Cambiar Estado</button>
-        </div>
-        <div class="room" id="room3">
-            <h2>Habitación 3</h2>
-            <p>Estado del foco: <span id="status3">Desconocido</span></p>
-            <button onclick="toggleFoco(3)">Cambiar Estado</button>
-        </div>
-        <div class="room" id="room4">
-            <h2>Habitación 4</h2>
-            <p>Estado del foco: <span id="status4">Desconocido</span></p>
-            <button onclick="toggleFoco(4)">Cambiar Estado</button>
-        </div>
+</div>
+
+<div class="container" id="canvas-container">
+    <a-scene embedded>
+        <a-entity gltf-model="Habi.glb" position="0 1.6 -5" rotation="0 180 0" scale="0.5 0.5 0.5"></a-entity>
+    </a-scene>
+</div>
+
+<div class="footer">
+    <p>© 2024 - Todos los derechos reservados</p>
+    <div class="social-icons">
+        <a href="#"><i class="fab fa-facebook"></i></a>
+        <a href="#"><i class="fab fa-whatsapp"></i></a>
+        <a href="#"><i class="fab fa-youtube"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
     </div>
-    <!-- Aquí se mostrará el diseño 3D usando A-Frame -->
-    <div class="container" id="canvas-container">
-        <a-scene embedded>
-            <!-- Ruta relativa al modelo 3D en tu proyecto -->
-            <a-entity gltf-model="Habi.glb" position="0 1.6 -5" rotation="0 180 0" scale="0.5 0.5 0.5"></a-entity>
-        </a-scene>
-    </div>
-    <div class="footer">
-        <p>© 2024 - Todos los derechos reservados</p>
-        <div class="social-icons">
-            <a href="#"><i class="fab fa-facebook"></i></a>
-            <a href="#"><i class="fab fa-whatsapp"></i></a>
-            <a href="#"><i class="fab fa-youtube"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
-        </div>
-    </div>
+</div>
+
 </body>
 </html>
