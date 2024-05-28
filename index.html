@@ -39,7 +39,7 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             max-width: 300px;
-            width: calc(50% - 40px);
+            width: 100%;
             box-sizing: border-box;
         }
         .room h2 {
@@ -53,6 +53,8 @@
             border-radius: 4px;
             cursor: pointer;
             font-size: 16px;
+            margin: 5px;
+            width: calc(50% - 10px);
         }
         .room button:hover {
             background-color: #454ba0;
@@ -85,10 +87,15 @@
             text-decoration: none;
             margin: 0 10px;
         }
+        @media (min-width: 768px) {
+            .room {
+                width: calc(50% - 40px);
+            }
+        }
     </style>
     <script>
         function toggleDevices(action) {
-            fetch('http://192.168.137.4/toggle?action=' + action)
+            fetch('http://192.168.137.201/toggle?action=' + action)
                 .then(response => response.text())
                 .then(data => {
                     console.log(data);
@@ -105,7 +112,7 @@
         }
 
         function getStatus() {
-            fetch('http://192.168.137.4/status')
+            fetch('http://192.168.137.201/status')
                 .then(response => response.text())
                 .then(data => {
                     console.log(data);
@@ -132,12 +139,22 @@
     </div>
 </div>
 
-<div class="container" id="canvas-container">
+<div id="canvas-container">
     <a-scene embedded>
-        <a-entity gltf-model="Habi.glb" position="0 1.6 -5" rotation="0 180 0" scale="0.5 0.5 0.5"></a-entity>
+        <a-assets>
+            <a-asset-item id="lab-model" src="LabT.glb"></a-asset-item>
+        </a-assets>
+        <a-entity gltf-model="#lab-model" position="0 2 0" rotation="0 180 0" scale="0.5 0.5 0.5"></a-entity>
+        <a-camera position="0 8 5" rotation="-45 0 0" wasd-controls look-controls></a-camera>
+        <a-light type="ambient" color="#ffffff" intensity="0.9"></a-light>
+        <a-light type="directional" color="#ffffff" intensity="0.6" position="-1 1 0"></a-light>
+        <a-sky color="#ECECEC"></a-sky>
     </a-scene>
 </div>
-
+</body>
+<br></br>
+<br></br>
+<br></br>
 <div class="footer">
     <p>© 2024 - Todos los derechos reservados</p>
     <div class="social-icons">
@@ -147,6 +164,4 @@
         <a href="#"><i class="fab fa-twitter"></i></a>
     </div>
 </div>
-
-</body>
 </html>
